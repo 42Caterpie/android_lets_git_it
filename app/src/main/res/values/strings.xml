@@ -3,4 +3,8 @@
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="challenge">Challenge</string>
+    <string name="contribution">Contribution</string>
+    <string name="days_ongoing">days\nongoing</string>
+    <string name="today_commit">today\ncommit</string>
+    <string name="badge">Badge</string>
 </resources>
