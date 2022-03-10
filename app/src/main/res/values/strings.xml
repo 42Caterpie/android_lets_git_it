@@ -7,4 +7,6 @@
     <string name="days_ongoing">days\nongoing</string>
     <string name="today_commit">today\ncommit</string>
     <string name="badge">Badge</string>
+    <string name="challenge_title">Title</string>
+    <string name="slash">/</string>
 </resources>
