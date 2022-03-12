@@ -357,6 +357,20 @@
                     app:layout_constraintTop_toBottomOf="@id/main_badge_title"
                     >
 
+                    <androidx.recyclerview.widget.RecyclerView
+                        android:id="@+id/main_badge_img_list"
+                        android:layout_width="300dp"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintTop_toTopOf="parent"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        tools:listitem="@layout/item_badge_frame"
+                        tools:itemCount="3"
+                        android:orientation="horizontal"
+                        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        />
+
                 </androidx.constraintlayout.widget.ConstraintLayout>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
