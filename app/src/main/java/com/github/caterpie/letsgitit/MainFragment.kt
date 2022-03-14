@@ -82,7 +82,6 @@ class MainFragment : Fragment() {
         binding.mainChallengeValue.addTextChangedListener(challengeWatcher)
         binding.mainChallengeValue.setOnEditorActionListener(dismissFocus)
         binding.mainChallengeTitleValue.setOnEditorActionListener(dismissFocus)
-        val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
     }
 
     override fun onStart() {
