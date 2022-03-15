@@ -61,4 +61,7 @@ dependencies {
 
     // timber
     implementation "com.jakewharton.timber:timber:$timber_version"
+
+    // SplashScreen compat library
+    implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
 }

@@ -4,8 +4,10 @@ import android.app.Activity
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
-import android.view.*
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.view.ViewTreeObserver
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import android.widget.LinearLayout
@@ -65,8 +67,8 @@ class MainFragment : Fragment() {
     /**
      * 글자 입력을 마치고 키패드의 done/enter를 선택 시 포커스를 잃게 만들어 키패드를 내림
      */
-    private val dismissFocus = object : TextView.OnEditorActionListener {
-        override fun onEditorAction(textView: TextView?, action: Int, keyEvent: KeyEvent?): Boolean {
+    private val dismissFocus =
+        TextView.OnEditorActionListener { textView, action, _ ->
             var result = false
             textView?.let { textView ->
                 if (action == EditorInfo.IME_ACTION_DONE) {
@@ -79,9 +81,8 @@ class MainFragment : Fragment() {
                     result = true
                 }
             }
-            return result
+            result
         }
-    }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.mainChallengeProgress.max = 365
@@ -116,7 +117,6 @@ class MainFragment : Fragment() {
                 onGoing = if (onGoing >= challenge) challenge else onGoing + 1
                 binding.mainChallengeProgress.progress = onGoing
                 val newX = calculateCheckerPosition(onGoing, progressStart, progressWidth / challenge.toDouble(), checkerWidth / 2)
-                Log.d("Test", "challenge: $challenge width: $progressWidth start: $progressStart ongoing: $onGoing result: $newX")
                 val layoutParams = LinearLayout.LayoutParams(
                     binding.mainChallengeChecker.width,
                     binding.mainChallengeChecker.height
