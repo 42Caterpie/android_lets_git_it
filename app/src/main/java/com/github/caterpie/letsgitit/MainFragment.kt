@@ -35,6 +35,9 @@ class MainFragment : Fragment() {
         return binding.root
     }
 
+    /**
+     * Challenge에 값을 입력하는 경우 ProgressBar를 변경할 수 있도록 함
+     */
     private val challengeWatcher = object : TextWatcher {
         override fun afterTextChanged(p0: Editable?) {}
 
@@ -59,6 +62,9 @@ class MainFragment : Fragment() {
         }
     }
 
+    /**
+     * 글자 입력을 마치고 키패드의 done/enter를 선택 시 포커스를 잃게 만들어 키패드를 내림
+     */
     private val dismissFocus = object : TextView.OnEditorActionListener {
         override fun onEditorAction(textView: TextView?, action: Int, keyEvent: KeyEvent?): Boolean {
             var result = false
@@ -90,6 +96,9 @@ class MainFragment : Fragment() {
 
     override fun onResume() {
         super.onResume()
+        /**
+         * 아래의 viewTreeObserver를 통해 생성 될 뷰의 크기를 얻을 수 있음. onResume 시점에서는 0의 값을 가짐
+         */
         val viewTreeObserver = binding.mainChallengeProgress.viewTreeObserver
         viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
             override fun onGlobalLayout() {
@@ -100,6 +109,7 @@ class MainFragment : Fragment() {
                 obs.removeOnGlobalLayoutListener(this)
             }
         })
+        // TODO: Test code. 참고 후 제거 필요함
         CoroutineScope(Dispatchers.Default).launch {
             for (i in 0 until 100) {
                 delay(500)
