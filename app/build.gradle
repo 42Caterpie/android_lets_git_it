@@ -28,6 +28,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs = ['-Xjvm-default=compatibility']
     }
     buildFeatures {
         viewBinding true
@@ -51,12 +52,14 @@ dependencies {
 
     // network
     implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
 
     // async
     implementation "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version"
 
     // glide
     implementation "com.github.bumptech.glide:glide:$glide_version"
+    implementation 'androidx.datastore:datastore-core:1.0.0'
     annotationProcessor "com.github.bumptech.glide:compiler:$glide_version"
 
     // timber
@@ -64,4 +67,12 @@ dependencies {
 
     // SplashScreen compat library
     implementation 'androidx.core:core-splashscreen:1.0.0-beta01'
+
+    // Preferences DataStore
+    implementation "androidx.datastore:datastore-preferences:1.0.0"
+
+    // Java language implementation
+    implementation "androidx.fragment:fragment:$fragment_version"
+    // Kotlin
+    implementation "androidx.fragment:fragment-ktx:$fragment_version"
 }

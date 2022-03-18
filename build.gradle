@@ -6,6 +6,7 @@ buildscript {
         lifecycle_version = "2.5.0-alpha02"
         glide_version = "4.13.0"
         timber_version = "5.0.1"
+        fragment_version = "1.4.1"
     }
 }
 
