@@ -1,33 +1,32 @@
 package com.github.caterpie.letsgitit.ui
 
+import android.app.Activity
 import android.os.Bundle
+import android.text.Editable
+import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.ViewTreeObserver
+import android.view.inputmethod.EditorInfo
+import android.view.inputmethod.InputMethodManager
+import android.widget.LinearLayout
+import android.widget.TextView
 import androidx.fragment.app.Fragment
-import com.github.caterpie.letsgitit.R
+import com.github.caterpie.letsgitit.databinding.FragmentMainBinding
+import kotlinx.coroutines.*
+import kotlin.math.roundToInt
 
-// TODO: Rename parameter arguments, choose names that match
-// the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-private const val ARG_PARAM1 = "param1"
-private const val ARG_PARAM2 = "param2"
-
-/**
- * A simple [Fragment] subclass.
- * Use the [MainFragment.newInstance] factory method to
- * create an instance of this fragment.
- */
 class MainFragment : Fragment() {
-    // TODO: Rename and change types of parameters
-    private var param1: String? = null
-    private var param2: String? = null
+    private val binding by lazy { FragmentMainBinding.inflate(layoutInflater) }
+    private var challenge = 365
+    private var progressStart = 0
+    private var progressWidth = 0
+    private var checkerWidth = 0
+    private var onGoing = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        arguments?.let {
-            param1 = it.getString(ARG_PARAM1)
-            param2 = it.getString(ARG_PARAM2)
-        }
     }
 
     override fun onCreateView(
@@ -35,26 +34,111 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_main, container, false)
+        return binding.root
+    }
+
+    /**
+     * Challenge에 값을 입력하는 경우 ProgressBar를 변경할 수 있도록 함
+     */
+    private val challengeWatcher = object : TextWatcher {
+        override fun afterTextChanged(p0: Editable?) {}
+
+        override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {}
+        override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
+            challenge = try {
+                val result = p0?.toString()?.toInt() ?: 365
+                if (result == 0) 365 else result
+            } catch (exception: Exception) {
+                365
+            }
+            binding.mainChallengeProgress.max = challenge
+            onGoing = if (challenge > onGoing) onGoing else challenge
+            binding.mainChallengeOngoingValue.text = onGoing.toString()
+            val newX = calculateCheckerPosition(onGoing, progressStart, progressWidth / challenge.toDouble(), checkerWidth / 2)
+            val layoutParams = LinearLayout.LayoutParams(
+                binding.mainChallengeChecker.width,
+                binding.mainChallengeChecker.height
+            )
+            layoutParams.setMargins(newX, 0, 0, 0)
+            binding.mainChallengeChecker.layoutParams = layoutParams
+        }
+    }
+
+    /**
+     * 글자 입력을 마치고 키패드의 done/enter를 선택 시 포커스를 잃게 만들어 키패드를 내림
+     */
+    private val dismissFocus =
+        TextView.OnEditorActionListener { textView, action, _ ->
+            var result = false
+            textView?.let { textView ->
+                if (action == EditorInfo.IME_ACTION_DONE) {
+                    textView.clearFocus()
+                    textView.isFocusable = false
+                    textView.isFocusableInTouchMode = true
+                    textView.isFocusable = true
+                    val imm = requireActivity().getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+                    imm.hideSoftInputFromWindow(textView.windowToken, 0)
+                    result = true
+                }
+            }
+            result
+        }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.mainChallengeProgress.max = 365
+        binding.mainChallengeValue.addTextChangedListener(challengeWatcher)
+        binding.mainChallengeValue.setOnEditorActionListener(dismissFocus)
+        binding.mainChallengeTitleValue.setOnEditorActionListener(dismissFocus)
+    }
+
+    override fun onStart() {
+        super.onStart()
+    }
+
+    override fun onResume() {
+        super.onResume()
+        /**
+         * 아래의 viewTreeObserver를 통해 생성 될 뷰의 크기를 얻을 수 있음. onResume 시점에서는 0의 값을 가짐
+         */
+        val viewTreeObserver = binding.mainChallengeProgress.viewTreeObserver
+        viewTreeObserver.addOnGlobalLayoutListener(object : ViewTreeObserver.OnGlobalLayoutListener {
+            override fun onGlobalLayout() {
+                val obs = binding.mainChallengeProgress.viewTreeObserver
+                progressStart = binding.mainChallengeProgress.left
+                progressWidth = binding.mainChallengeProgress.width
+                checkerWidth = binding.mainChallengeChecker.width
+                obs.removeOnGlobalLayoutListener(this)
+            }
+        })
+        // TODO: Test code. 참고 후 제거 필요함
+        CoroutineScope(Dispatchers.Default).launch {
+            for (i in 0 until 100) {
+                delay(500)
+                onGoing = if (onGoing >= challenge) challenge else onGoing + 1
+                binding.mainChallengeProgress.progress = onGoing
+                val newX = calculateCheckerPosition(onGoing, progressStart, progressWidth / challenge.toDouble(), checkerWidth / 2)
+                val layoutParams = LinearLayout.LayoutParams(
+                    binding.mainChallengeChecker.width,
+                    binding.mainChallengeChecker.height
+                )
+                layoutParams.setMargins(newX, 0, 0, 0)
+                withContext(Dispatchers.Main) {
+                    binding.mainChallengeOngoingValue.text = onGoing.toString()
+                    binding.mainChallengeChecker.layoutParams = layoutParams
+                    binding.root.invalidate()
+                }
+            }
+        }
+    }
+
+    private fun calculateCheckerPosition(current: Int, start: Int, ratio: Double, offset: Int) : Int {
+        val newX = ratio * current + start - offset
+        return newX.roundToInt()
     }
 
     companion object {
-        /**
-         * Use this factory method to create a new instance of
-         * this fragment using the provided parameters.
-         *
-         * @param param1 Parameter 1.
-         * @param param2 Parameter 2.
-         * @return A new instance of fragment MainFragment.
-         */
-        // TODO: Rename and change types and number of parameters
         @JvmStatic
-        fun newInstance(param1: String, param2: String) =
-            MainFragment().apply {
-                arguments = Bundle().apply {
-                    putString(ARG_PARAM1, param1)
-                    putString(ARG_PARAM2, param2)
-                }
-            }
+        fun newInstance() =
+            MainFragment()
     }
 }
