@@ -13,7 +13,7 @@ class UserRepository(
         return userPreferencesDataStore.getUserPreferencesFlow()?.map {
             return@map it.userToken.isNotBlank()
         } ?: flow {
-            this.emit(false)
+            this.emit(true)
         }
     }
 }
