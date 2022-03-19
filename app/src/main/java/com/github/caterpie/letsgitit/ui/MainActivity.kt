@@ -28,11 +28,11 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
 		userViewModel.isUserLogin.observe(this) { isUserLogin ->
 			if (savedInstanceState == null) {
-//				if (isUserLogin) {
+				if (isUserLogin) {
 					replace<MainFragment>(viewBinding.fragmentContainerView.id)
-//				} else {
-//					replace<LoginFragment>(viewBinding.fragmentContainerView.id)
-//				}
+				} else {
+					replace<LoginFragment>(viewBinding.fragmentContainerView.id)
+				}
 			}
 		}
 
