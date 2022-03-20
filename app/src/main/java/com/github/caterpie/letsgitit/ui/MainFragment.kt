@@ -58,7 +58,6 @@ class MainFragment : Fragment() {
         }
     }
 
-
     override fun onStart() {
         super.onStart()
     }
@@ -67,11 +66,10 @@ class MainFragment : Fragment() {
         super.onResume()
         viewModel.onGoing.observe(viewLifecycleOwner) {
             binding.mainChallengeOngoingValue.text = "$it"
-            binding.mainChallengeProgress.progress = min(it, viewModel.challenge.value ?: 365)
+            binding.mainChallengeProgress.progress = viewModel.getProgressOnGoing()
         }
         viewModel.challenge.observe(viewLifecycleOwner) {
             binding.mainChallengeProgress.max = it
-            binding.mainChallengeProgress.progress = min(it, viewModel.onGoing.value ?: 0)
         }
     }
 
